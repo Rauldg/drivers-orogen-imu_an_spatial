@@ -203,10 +203,14 @@ void Task::updateHook()
                                                 quaternion_orientation_packet.orientation[3]);
 
                             //TODO Definetly check if this does what it should (NED2NWU)
-                            Eigen::Quaternion<double, Eigen::DontAlign> ned2nwu_q;
+                            Eigen::Quaternion<double, Eigen::DontAlign> ned2nwu_q;                            
                             ned2nwu_q = base::AngleAxisd(M_PI, Eigen::Vector3d::UnitX());
-                            if(_NED2NWU) ori = ned2nwu_q * q;
-                            else ori = q; 
+                            Eigen::Quaternion<double, Eigen::DontAlign> fix_q;
+                            Eigen::Quaternion<double, Eigen::DontAlign> fix_q_2;
+                            fix_q = base::AngleAxisd(M_PI, Eigen::Vector3d::UnitX());
+                            fix_q_2 = base::AngleAxisd(M_PI/2.0, Eigen::Vector3d::UnitZ());
+                            if(_NED2NWU) ori = ned2nwu_q * q * fix_q * fix_q_2;
+                            else ori = q * fix_q * fix_q_2; 
                             imu_pose.orientation = ori;
 
                             double x,y,z;
